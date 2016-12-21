@@ -8,6 +8,15 @@ from time import sleep
 import csv
 import sys
 
+try:
+    from term import render
+    def emit(text):
+        print render(text)
+except ImportError:
+    # Terminal module not available
+    def emit(text):
+        print text
+
 LogRecord = namedtuple("LogRecord",
                        'log_time,'
                        'user_name,'
@@ -77,12 +86,23 @@ def printout(record):
     """
     Simple handler for log records. Prints the log record to stdout
     """
-    print("{0.log_time} "
-          "{0.user_name} "
-          '{0.database_name} '
-          '{0.connection_from} '
-          '{0.error_severity} '
-          '{0.application_name}\n{0.message}'.format(record))
+
+    if record.error_severity == 'ERROR':
+        emit("%(BOLD)s%(RED)s{0.log_time} "
+             "{0.user_name} "
+             '{0.database_name} '
+             '{0.connection_from} '
+             '{0.error_severity} '
+             '{0.application_name}%(NORMAL)s\n'
+             '%(YELLOW)s{0.message}%(NORMAL)s'.format(record))
+    else:
+        emit("%(BOLD)s{0.log_time} "
+             "{0.user_name} "
+             '{0.database_name} '
+             '{0.connection_from} '
+             '{0.error_severity} '
+             '{0.application_name}%(NORMAL)s\n'
+             '{0.message}'.format(record))
 
 
 def monitor(filename, handler=printout):
