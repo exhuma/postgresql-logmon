@@ -1,0 +1,29 @@
+from setuptools import setup, find_packages
+
+with open('pglogmon/version.txt') as fptr:
+    VERSION = fptr.read().strip()
+
+with open('README.rst') as fptr:
+    LONG_DESCRIPTION = fptr.read().strip()
+
+
+setup(
+    name='pglogmon',
+    version=VERSION,
+    description="Tool to monitor postgresql CSV logs",
+    long_description=LONG_DESCRIPTION,
+    author="Michel Albert",
+    author_email="michel@albert.lu",
+    url='https://github.com/exhuma/postgresql-logmon',
+    license="Private",
+    include_package_data=True,
+    install_requires=[
+        'blessings'
+    ],
+    entry_points={
+        'console_scripts': [
+            'pglogmon=pglogmon.main:main',
+        ]
+    },
+    packages=find_packages(exclude=["test", "tests.*", "tests"]),
+)

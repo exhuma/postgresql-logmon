@@ -128,5 +128,9 @@ def monitor(filename, handler=printout):
             handler(row)
 
 
-if __name__ == '__main__':
+def main():
     monitor(sys.argv[1])
+
+
+if __name__ == '__main__':
+    main()
