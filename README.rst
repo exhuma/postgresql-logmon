@@ -8,7 +8,7 @@ properly parses the records.
 
 Installation::
 
-    pip install --user https://github.com/exhuma/postgresql-logmon
+    pip install --user git+https://github.com/exhuma/postgresql-logmon.git
 
 
 After running as user installation like above, run it like this::
