@@ -4,6 +4,7 @@ format of PostgreSQL 9.1. Note that the CSV format might change across
 versions, and this script might breach. However, it is easily changed!
 """
 from __future__ import print_function
+from argparse import ArgumentParser
 from collections import namedtuple
 from time import sleep
 import csv
@@ -80,6 +81,25 @@ class StreamIterator(object):
                 char = self.f.read(1)
 
 
+def parse_args(cmdargs):
+    """
+    Sets up the command-line arguments.
+
+    Returns the parsed arguments.
+    """
+    parser = ArgumentParser(
+        description='Monitor a PostgreSQL CSV log file.')
+    parser.add_argument('-d', '--database', default='',
+                        help=('Limit logs to the named database'))
+    parser.add_argument('filename', nargs=1)
+
+    args = parser.parse_args(cmdargs)
+    if not args.filename:
+        parser.error('You must specify a filename!')
+
+    return args
+
+
 def printout(record):
     """
     Simple handler for log records. Prints the log record to stdout
@@ -116,7 +136,7 @@ def printout(record):
     print(message)
 
 
-def monitor(filename, handler=printout):
+def monitor(filename, database='', handler=printout):
     """
     Start monitoring the given filename.
     """
@@ -125,11 +145,15 @@ def monitor(filename, handler=printout):
         reader = csv.reader(StreamIterator(csvfile), delimiter=",", quotechar='"')
         for row in reader:
             row = LogRecord(*row)
-            handler(row)
+            if not database or row.database_name == database:
+                handler(row)
 
 
 def main():
-    monitor(sys.argv[1])
+    args = parse_args(sys.argv[1:])
+    if args.database:
+        print('*** Only showing entries for database %s' % args.database)
+    monitor(args.filename[0], args.database)
 
 
 if __name__ == '__main__':
