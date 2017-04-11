@@ -1,9 +1,20 @@
 Simple log monitor for PostgreSQL CSV logs.
 
+To enable CSV logs, please refer to the PostgreSQL docs.
+
 This monitor takes into account that some queries might contain newlines, and
 properly parses the records.
 
 
-Usage::
+Installation::
 
-    python pglog.py /path/to/csvlog.csv
+    pip install --user https://github.com/exhuma/postgresql-logmon
+
+
+After running as user installation like above, run it like this::
+
+    ~/.local/bin/pglogmon --help
+
+Or start monitoring right away::
+
+    ~/.local/bin/pglogmon /psth/to/postgresql.csv
