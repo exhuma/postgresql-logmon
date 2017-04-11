@@ -150,6 +150,9 @@ def monitor(filename, database='', handler=printout):
 
 
 def main():
+    if sys.version_info < (3, 3):
+        print('Requires at least Python 3.3', file=sys.stderr)
+        return 1
     args = parse_args(sys.argv[1:])
     if args.database:
         print('*** Only showing entries for database %s' % args.database)
@@ -157,7 +160,8 @@ def main():
         monitor(args.filename[0], args.database)
     except KeyboardInterrupt:
         print('Bye')
+    return 0
 
 
 if __name__ == '__main__':
-    main()
+    sys.exit(main())
