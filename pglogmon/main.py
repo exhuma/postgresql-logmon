@@ -153,7 +153,10 @@ def main():
     args = parse_args(sys.argv[1:])
     if args.database:
         print('*** Only showing entries for database %s' % args.database)
-    monitor(args.filename[0], args.database)
+    try:
+        monitor(args.filename[0], args.database)
+    except KeyboardInterrupt:
+        print('Bye')
 
 
 if __name__ == '__main__':
