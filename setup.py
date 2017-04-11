@@ -15,7 +15,7 @@ setup(
     author="Michel Albert",
     author_email="michel@albert.lu",
     url='https://github.com/exhuma/postgresql-logmon',
-    license="Private",
+    license="MIT",
     include_package_data=True,
     install_requires=[
         'blessings'
@@ -26,4 +26,18 @@ setup(
         ]
     },
     packages=find_packages(exclude=["test", "tests.*", "tests"]),
+    keywords='postgresql sysadmin',
+    classifiers=[
+        'Development Status :: 5 - Production/Stable',
+        'Environment :: Console',
+        'Intended Audience :: Developers',
+        'Intended Audience :: Information Technology',
+        'Intended Audience :: System Administrators',
+        'License :: OSI Approved :: MIT License',
+        'Programming Language :: Python',
+        'Programming Language :: Python :: 3',
+        'Programming Language :: Python :: 3 :: Only',
+        'Programming Language :: Python :: Implementation :: Stackless',
+
+    ]
 )
