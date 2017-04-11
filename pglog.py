@@ -3,19 +3,17 @@ Alternative monitor for PostgreSQL CSV logs. This was written against the log
 format of PostgreSQL 9.1. Note that the CSV format might change across
 versions, and this script might breach. However, it is easily changed!
 """
+from __future__ import print_function
 from collections import namedtuple
 from time import sleep
 import csv
 import sys
 
 try:
-    from term import render
-    def emit(text):
-        print render(text)
+    import blessings
+    TERM = blessings.Terminal()
 except ImportError:
-    # Terminal module not available
-    def emit(text):
-        print text
+    TERM = None
 
 LogRecord = namedtuple("LogRecord",
                        'log_time,'
@@ -60,7 +58,7 @@ class StreamIterator(object):
     def __iter__(self):
         return self
 
-    def next(self):
+    def __next__(self):
         last_char = ''
         inside_quote = False
         char = self.f.read(1)
@@ -86,23 +84,36 @@ def printout(record):
     """
     Simple handler for log records. Prints the log record to stdout
     """
-
-    if record.error_severity == 'ERROR':
-        emit("%(BOLD)s%(RED)s{0.log_time} "
-             "{0.user_name} "
-             '{0.database_name} '
-             '{0.connection_from} '
-             '{0.error_severity} '
-             '{0.application_name}%(NORMAL)s\n'
-             '%(YELLOW)s{0.message}%(NORMAL)s'.format(record))
+    if TERM:
+        if record.error_severity == 'ERROR':
+            line_color = TERM.red
+            message_color = TERM.yellow
+        else:
+            line_color = TERM.white
+            message_color = TERM.green
+        message = (
+            '{1.bold}{2}{0.log_time} '
+            '{0.user_name} '
+            '{0.database_name} '
+            '{0.connection_from} '
+            '{0.error_severity} '
+            '{0.application_name}{1.normal}\n'
+            '{3}{0.message}{1.normal}'.format(
+                record,
+                TERM,
+                line_color,
+                message_color))
     else:
-        emit("%(BOLD)s{0.log_time} "
-             "{0.user_name} "
-             '{0.database_name} '
-             '{0.connection_from} '
-             '{0.error_severity} '
-             '{0.application_name}%(NORMAL)s\n'
-             '{0.message}'.format(record))
+        message = (
+            '{0.log_time} '
+            '{0.user_name} '
+            '{0.database_name} '
+            '{0.connection_from} '
+            '{0.error_severity} '
+            '{0.application_name}\n'
+            '{0.message}'.format(record))
+
+    print(message)
 
 
 def monitor(filename, handler=printout):
